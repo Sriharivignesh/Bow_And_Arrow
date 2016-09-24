@@ -42,37 +42,79 @@ BOW_IMAGE = pygame.image.load("archer.gif")
 GAME_CONTINUE = True
 GAME_FPS = 30
 
+class Balloons(pygame.sprite.Sprite):
+
+    def __init__(self):
+
+        super(Balloons, self).__init__()
+        self.image = BALLOON_IMAGE
+        self.rect = self.image.get_rect()
+        self.Fallen_Balloon = False
+
+    def set_balloon_position(self, x, y):
+        self.rect.x = x
+        self.rect.y = y
+
+    def balloon_move(self):
+        if self.Fallen_Balloon == False:
+            if self.rect.y <= 0:
+                self.rect.y = SCREEN_HEIGHT
+            else:
+                self.rect.y -= 5
+        else:
+            if self.rect.y >= SCREEN_HEIGHT:
+                self.kill()
+            else:
+                self.rect.y += 5
+    
+    def balloon_burst(self):
+        self.image = BALLOON_BURST_IMAGE
+        self.Fallen_Balloon = True
+
+
+
+class Arrow(pygame.sprite.Sprite):
+    def __init__(self):
+        super(Arrow, self).__init__()
+        self.image = ARROW_IMAGE
+        self.rect = self.image.get_rect()
+
+    def set_arrow_position(self, x, y):
+        self.rect.x = x
+        self.rect.y = y
+
+    def arrow_move(self):
+        if self.rect.x >= SCREEN_WIDTH:
+            self.kill()
+        else:
+            self.rect.x += 10
+
+BALLOON_GROUP = pygame.sprite.Group()
+ARROW_GROUP = pygame.sprite.Group()
+
+for i in range(17):
+    temp_balloon = Balloons()
+    temp_balloon.set_balloon_position(BALLOON_GAME_WIDTH, BALLOON_GAME_HEIGHT)
+    BALLOON_GAME_WIDTH += 30
+    BALLOON_GROUP.add(temp_balloon)
+
 game_canvas = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('BOW AND ARROW - RECREATION')
-
-for x in range(10):
-    BALLOON_CONTAINER.append(1)
 
 game_canvas.fill(GREEN)
 pygame.display.update()
 
 game_clock = pygame.time.Clock()
 
-counter = 0
-
 while GAME_CONTINUE:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             GAME_CONTINUE = False
 
-    #game_canvas.fill(GREEN)
-    game_canvas.blit(GAME_BACKGROUND_IMAGE, (0, 0))
-    BALLOON_GAME_COORDINATES_CONTAINER = []
 
-    for y in range(17):
-        #game_canvas.fill(RED,rect = [BALLOON_GAME_WIDTH,BALLOON_GAME_HEIGHT,10,10])
-        game_canvas.blit(BALLOON_IMAGE,(BALLOON_GAME_WIDTH,BALLOON_GAME_HEIGHT))
-        BALLOON_GAME_COORDINATES_CONTAINER.append(BALLOON_GAME_WIDTH)
-        BALLOON_GAME_WIDTH += 30
-    
+    game_canvas.blit(GAME_BACKGROUND_IMAGE, (0, 0))
     mouse_location = pygame.mouse.get_pos()[1]
     bow_location = mouse_location
-    #game_canvas.fill(RED,rect = [50,mouse_location,10,10])
     if bow_location > SCREEN_HEIGHT - 50:
         bow_location = SCREEN_HEIGHT - 50 
     game_canvas.blit(BOW_IMAGE, (10,bow_location))
@@ -84,23 +126,20 @@ while GAME_CONTINUE:
     elif MOUSE_CLICK[0] == 0 and MOUSE_CLICK_PREVIOUS == 1:
         #print("ONE MOUSE CLICK CYCLE DONE")
         ARROW_SHOT = True
-        #ARROW_COORDINATES = [30, bow_location + 35]
-        ARROW_CONTAINER.append([30, bow_location + 35])
+        temp_arrow = Arrow()
+        temp_arrow.set_arrow_position(30, bow_location + 35)
+        ARROW_GROUP.add(temp_arrow)
         MOUSE_CLICK_PREVIOUS = 0
 
-    if ARROW_SHOT == True:
-        for coordinates in ARROW_CONTAINER:
-            if coordinates[0] >= SCREEN_WIDTH:
-                del coordinates
-            else:
-                game_canvas.blit(ARROW_IMAGE, (coordinates[0], coordinates[1]))
-                coordinates[0] += 10
+    for all_balloons in BALLOON_GROUP:
+        all_balloons.balloon_move() 
 
+    for all_arrows in ARROW_GROUP:
+        all_arrows.arrow_move()
+    
+    BALLOON_GROUP.draw(game_canvas)
+    ARROW_GROUP.draw(game_canvas)
     pygame.display.update()
-    BALLOON_GAME_HEIGHT -= 5
-    if BALLOON_GAME_HEIGHT <= 0:
-        BALLOON_GAME_HEIGHT = SCREEN_HEIGHT
-    BALLOON_GAME_WIDTH = 280
     game_clock.tick(GAME_FPS)
 
 
