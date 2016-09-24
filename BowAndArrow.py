@@ -22,22 +22,22 @@ BALLOON_HEIGHT = 30
 BALLOON_WIDTH = 30
 BALLOON_GAME_HEIGHT = 600
 BALLOON_GAME_WIDTH = 280
-BALLOON_IMAGE = pygame.image.load("balloon.png")
-BALLOON_BURST_IMAGE = pygame.image.load("balloon_burst.png")
+BALLOON_IMAGE = pygame.image.load("Level_1_Sprites/balloon.png")
+BALLOON_BURST_IMAGE = pygame.image.load("Level_1_Sprites/balloon_burst.png")
 
-GAME_BACKGROUND_IMAGE = pygame.image.load("background.jpg")
+GAME_BACKGROUND_IMAGE = pygame.image.load("Common_Sprites/background.jpg")
 
 MOUSE_CLICK_CURRENT = 0
 MOUSE_CLICK_PREVIOUS = 0
 
 ARROW_HEIGHT = 2
 ARROW_WIDTH = 30
-ARROW_IMAGE = pygame.image.load("arrow.png")
+ARROW_IMAGE = pygame.image.load("Common_Sprites/arrow.png")
 ARROW_SHOT = False
 ARROW_COORDINATES = []
 ARROW_CONTAINER = []
 
-BOW_IMAGE = pygame.image.load("archer.gif")
+BOW_IMAGE = pygame.image.load("Common_Sprites/archer.gif")
 
 GAME_CONTINUE = True
 GAME_FPS = 30
@@ -136,6 +136,11 @@ while GAME_CONTINUE:
 
     for all_arrows in ARROW_GROUP:
         all_arrows.arrow_move()
+
+    for all_arrows in ARROW_GROUP:
+        collide = pygame.sprite.spritecollide(all_arrows, BALLOON_GROUP, False)
+        for burst_balloons in collide:
+            burst_balloons.balloon_burst()
     
     BALLOON_GROUP.draw(game_canvas)
     ARROW_GROUP.draw(game_canvas)
