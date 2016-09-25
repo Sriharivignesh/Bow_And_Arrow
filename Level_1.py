@@ -19,7 +19,6 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
 #Set Balloon characteristics
-BALLOON_GAME_COORDINATES_CONTAINER = []
 BALLOON_HEIGHT = 30
 BALLOON_WIDTH = 30
 BALLOON_GAME_HEIGHT = 600
@@ -50,6 +49,8 @@ GAME_CONTINUE = True
 
 #Set Game FPS Rate
 GAME_FPS = 30
+
+GAME_FONT = pygame.font.SysFont("comicsans", 50)
 
 #Balloon class
 class Balloons(pygame.sprite.Sprite):
@@ -154,8 +155,13 @@ while GAME_CONTINUE:
     pygame.display.update()
     game_clock.tick(GAME_FPS)
 
-
-
+game_canvas.blit(GAME_BACKGROUND_IMAGE, (0, 0))
+text_surface = GAME_FONT.render("Thank you for playing!", 1, BLACK)
+text_rect = text_surface.get_rect()
+text_rect.center = (SCREEN_WIDTH/3, SCREEN_HEIGHT/3)
+game_canvas.blit(text_surface, text_rect)
+pygame.display.update()
+time.sleep(5)
 pygame.quit()
 quit()
 
